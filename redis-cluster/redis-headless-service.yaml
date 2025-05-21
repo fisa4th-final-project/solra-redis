@@ -3,11 +3,11 @@ kind: Service
 metadata:
   name: redis
 spec:
-  clusterIP: None  # Headless
+  type: NodePort
   selector:
-    app: redis
+    statefulset.kubernetes.io/pod-name: redis-0
   ports:
     - port: 6379
-      name: client
-    - port: 16379
-      name: cluster
+      targetPort: 6379
+      nodePort: 30079
+      protocol: TCP
