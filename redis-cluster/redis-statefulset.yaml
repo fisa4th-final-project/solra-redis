@@ -21,10 +21,11 @@ spec:
             - containerPort: 6379
             - containerPort: 16379
           volumeMounts:
-            - name: redis-data
-              mountPath: /data
             - name: redis-config
               mountPath: /etc/redis
+              readOnly: true
+            - name: redis-generated
+              mountPath: /data/config
           env:
             - name: POD_NAME
               valueFrom:
@@ -33,11 +34,11 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              envsubst < /etc/redis/redis.conf.template > /etc/redis/redis.conf && \
-              redis-server /etc/redis/redis.conf
+              envsubst < /etc/redis/redis.conf.template > /data/config/redis.conf && \
+              redis-server /data/config/redis.conf
       volumes:
         - name: redis-config
           configMap:
             name: redis-config
-        - name: redis-data
+        - name: redis-generated
           emptyDir: {}
