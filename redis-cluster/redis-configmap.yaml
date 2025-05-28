@@ -4,12 +4,12 @@ metadata:
   name: redis-config
   namespace: redis
 data:
-  redis.conf.template: |
+  redis.conf: |
     port 6379
     cluster-enabled yes
     cluster-config-file nodes.conf
     cluster-node-timeout 5000
     appendonly yes
-    cluster-announce-ip ${POD_NAME}.redis.redis.svc.cluster.local
     cluster-announce-port 6379
     cluster-announce-bus-port 16379
+    cluster-announce-ip redis-0.redis.redis.svc.cluster.local

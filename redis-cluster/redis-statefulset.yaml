@@ -4,8 +4,8 @@ metadata:
   name: redis
   namespace: redis
 spec:
-  replicas: 6
   serviceName: redis
+  replicas: 6
   selector:
     matchLabels:
       app: redis
@@ -14,31 +14,40 @@ spec:
       labels:
         app: redis
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - redis
+                topologyKey: "kubernetes.io/hostname"
       containers:
         - name: redis
-          image: bitnami/redis:7.2.8-debian-11-r0
+          image: redis:7.2-alpine
+          command: ["redis-server", "/data/redis.conf"]
           ports:
             - containerPort: 6379
             - containerPort: 16379
           volumeMounts:
-            - name: redis-config
-              mountPath: /etc/redis
-              readOnly: true
-            - name: redis-generated
-              mountPath: /data/config
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              envsubst < /etc/redis/redis.conf.template > /data/config/redis.conf && \
-              redis-server /data/config/redis.conf
+            - name: redis-data
+              mountPath: /data
+            - name: config
+              mountPath: /data/redis.conf
+              subPath: redis.conf
       volumes:
-        - name: redis-config
+        - name: config
           configMap:
             name: redis-config
-        - name: redis-generated
-          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
