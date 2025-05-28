@@ -38,6 +38,11 @@ spec:
             - name: config
               mountPath: /data/redis.conf
               subPath: redis.conf
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
       volumes:
         - name: config
           configMap:
