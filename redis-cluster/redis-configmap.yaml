@@ -11,6 +11,6 @@ data:
     appendonly yes
 
     # 클러스터 재지정 응답을 DNS로 주기 위해 선언
-    cluster-announce-ip ${POD_NAME}.redis.redis.svc.cluster.local
+    cluster-announce-ip redis-0.redis.redis.svc.cluster.local
     cluster-announce-port 6379
     cluster-announce-bus-port 16379
