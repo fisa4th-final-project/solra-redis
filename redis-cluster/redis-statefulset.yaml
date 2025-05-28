@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: redis
-          image: redis:7.2-alpine
+          image: bitnami/redis:7.2.8-debian-11-r0
           ports:
             - containerPort: 6379
             - containerPort: 16379
