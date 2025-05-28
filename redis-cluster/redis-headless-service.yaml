@@ -4,11 +4,11 @@ metadata:
   name: redis
   namespace: redis
 spec:
-  clusterIP: None  # Headless 설정
-  ports:
-    - port: 6379
-      name: client
-    - port: 16379
-      name: gossip
+  clusterIP: None
   selector:
     app: redis
+  ports:
+    - name: client
+      port: 6379
+    - name: cluster
+      port: 16379
